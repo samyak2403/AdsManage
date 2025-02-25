@@ -48,12 +48,24 @@
 
     </LinearLayout>
 
+    <!-- Native Banner Container -->
+    <include
+        android:id="@+id/ad_container"
+        layout="@layout/ad_container_native_banner_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- Banner Ad Container (Initially Hidden) -->
     <LinearLayout
         android:id="@+id/bannerContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

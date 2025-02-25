@@ -50,6 +50,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
     
     // AdMob
     implementation("com.google.android.gms:play-services-ads:22.4.0")

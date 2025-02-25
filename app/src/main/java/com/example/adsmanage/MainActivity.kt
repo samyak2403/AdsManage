@@ -3,6 +3,7 @@ package com.example.adsmanage
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -165,37 +166,54 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        binding.adContainer.shimmerViewContainer.startShimmer()
         // Reload ads if needed
         if (::adHelper.isInitialized && !adHelper.isAnyAdReady()) {
             adHelper.preloadAds()
         }
     }
 
+    override fun onPause() {
+        binding.adContainer.shimmerViewContainer.stopShimmer()
+        super.onPause()
+    }
+
     private fun loadBannerAd() {
         try {
+            // Start shimmer effect
+            binding.adContainer.shimmerViewContainer.startShimmer()
+            binding.adContainer.shimmerViewContainer.visibility = View.VISIBLE
+            binding.adContainer.adsContainerBanner.visibility = View.GONE
+            binding.bannerContainer.visibility = View.GONE
+            
             val adView = AdView(this)
             adView.adUnitId = getString(R.string.admob_banner_id)
             adView.setAdSize(getAdSize())
             
-            // Add the AdView to the layout
             binding.bannerContainer.removeAllViews()
             binding.bannerContainer.addView(adView)
 
-            // Create an ad request and load the banner ad
             val adRequest = AdRequest.Builder().build()
             adView.loadAd(adRequest)
 
-            // Save reference to banner ad
             bannerAd = adView
 
-            // Set ad listener
             adView.adListener = object : AdListener() {
-                override fun onAdLoaded() {
-                    Log.d(TAG, "Banner ad loaded successfully")
-                }
-
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     Log.e(TAG, "Banner ad failed to load: ${error.message}")
+                    // Stop shimmer and show native banner
+                    binding.adContainer.shimmerViewContainer.stopShimmer()
+                    binding.adContainer.shimmerViewContainer.visibility = View.GONE
+                    binding.adContainer.adsContainerBanner.visibility = View.VISIBLE
+                    binding.bannerContainer.visibility = View.GONE
+                }
+                
+                override fun onAdLoaded() {
+                    Log.d(TAG, "Banner ad loaded successfully")
+                    // Stop shimmer and show banner ad
+                    binding.adContainer.shimmerViewContainer.stopShimmer()
+                    binding.adContainer.root.visibility = View.GONE
+                    binding.bannerContainer.visibility = View.VISIBLE
                 }
 
                 override fun onAdOpened() {
@@ -208,6 +226,11 @@ class MainActivity : AppCompatActivity() {
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error loading banner ad: ${e.message}")
+            // Stop shimmer and show native banner
+            binding.adContainer.shimmerViewContainer.stopShimmer()
+            binding.adContainer.shimmerViewContainer.visibility = View.GONE
+            binding.adContainer.adsContainerBanner.visibility = View.VISIBLE
+            binding.bannerContainer.visibility = View.GONE
         }
     }
 
